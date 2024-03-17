@@ -4,7 +4,28 @@ class Room
 {
 	// Private fields
 	private string description;
+
+	internal Dictionary<string, Enemy> enemies;
 	private Dictionary<string, Room> exits; // stores exits of this room.
+	private Inventory chest;
+
+	// property
+	public Inventory Chest
+	{
+		get { return chest; }
+	}
+
+	public Room()
+	{
+		// a Room can handle a big inventory
+		chest = new Inventory(999999);
+	}
+
+	public void AddItem(string itemName, Item item)
+	{
+		chest.Put(itemName, item);
+	}
+
 
 	// Create a room described "description". Initially, it has no exits.
 	// "description" is something like "in a kitchen" or "in a court yard".
@@ -12,13 +33,22 @@ class Room
 	{
 		description = desc;
 		exits = new Dictionary<string, Room>();
+		chest = new Inventory(100); // Initialize the chest with a maximum weight of 100
+		enemies = new Dictionary<string, Enemy>();
 	}
+
 
 	// Define an exit for this room.
 	public void AddExit(string direction, Room neighbor)
 	{
 		exits.Add(direction, neighbor);
 	}
+
+	public void AddEnemy(string enemyname, Enemy enemy)
+    {
+        enemy.Name = enemyname;
+        enemies.Add(enemyname, enemy);
+    }
 
 	// Return the description of the room.
 	public string GetShortDescription()
@@ -70,4 +100,13 @@ class Room
 
 		return str;
 	}
+
+	public void RemoveEnemy(string enemyname)
+{
+    if (enemies.ContainsKey(enemyname))
+    {
+        enemies.Remove(enemyname);
+    }
+}
+
 }

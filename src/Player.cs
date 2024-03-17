@@ -22,10 +22,22 @@ class Player
     }
 
     
-    public void damagePlayer()
+    public void damagePlayerMove()
     {
         health -= damageTaken;
     }
+
+
+    public void damagePlayer(int amount)
+{
+    health -= amount;
+    if (health <= 0)
+    {
+        isAlive = false;
+    }
+}
+
+
 
      public void devdamagePlayer()
     {

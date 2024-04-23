@@ -5,7 +5,6 @@ class Game
 	// Private fields
 	private Parser parser;
 	private Player player;
-	private Room ascendedHeaven; //
 
 	public int keysCollected;
 	private bool gameWon = false; 
@@ -87,23 +86,34 @@ class Game
 		treeSide.Chest.Put("moonlightdagger", moonlightdagger);
 		treeSide.Chest.Put("darkkey", darkkey);
 		// ADD ENEMIES
-								//  armor title dmg, heal upon kill, player
-		    Enemy voidslime = new Enemy(0, "VoidSlime",2,25, player);
+								//  health armor title dmg, heal upon kill, player
+		    Enemy voidslime = new Enemy(25,10, "VoidSlime",2,25, player);
     		riverbank.AddEnemy("VoidSlime", voidslime);
 			voidslime.AddLoot(new Item(1, 0, "voidessence"));
 			voidslime.AddLoot(new Item(1, 0, "dust"));
 			voidslime.AddLoot(new Item(1,0, "A Note: Collect the 4 Void Keys to ascend!"));
 
-			Enemy Ignis = new Enemy(50, "The Flame Warden",25,100, player);
+            Enemy Borus = new Enemy(100,50, "The Ancient Tree",25,25, player);
+            ancientTree.AddEnemy("Borus", Borus);
+
+            Enemy Skeleton = new Enemy(50,50, "The Skelleybones",10,25, player);
+            sanctumRoom1.AddEnemy("Skeleton", Skeleton);
+
+            Enemy Snail = new Enemy(10,20, "The Snailiest",1,5, player);
+            Enemy BigSnail = new Enemy(10,50, "BIG BOY",1,5, player);
+            beginForest.AddEnemy("Snail", Snail);
+            deepForest.AddEnemy("BigSnail", BigSnail);
+
+			Enemy Ignis = new Enemy(100,50, "The Flame Warden",25,100, player);
     		sanctumRoom2.AddEnemy("Ignis", Ignis);
 
-			Enemy Thoros = new Enemy(50, "The Stormcaller",50,150, player);
+			Enemy Thoros = new Enemy(100,50, "The Stormcaller",50,100, player);
 			sanctumRoom4.AddEnemy("Thoros", Thoros);
 
-			Enemy Nyx = new Enemy(75, "The Shadow Seraph",100,150, player);
+			Enemy Nyx = new Enemy(100,75, "The Shadow Seraph",50,100, player);
 			sanctumExit.AddEnemy("Nyx", Nyx);
 
-			Enemy Luminos = new Enemy(75, "The Radiant Sentinel",100,150, player);
+			Enemy Luminos = new Enemy(200,100, "The Radiant Sentinel",100,150, player);
 			ascendedHeaven.AddEnemy("Luminos", Luminos);
 
 
@@ -146,6 +156,8 @@ public void Play()
 		Console.WriteLine("As a Voidborne you get a second chance in life, to get resurrected as a Lightborne");
 		Console.WriteLine("Go now, your time is limited... find a way to the top");
 		Console.WriteLine("You are on a small boat, and are approaching a riverbank");
+        Console.WriteLine("Killing enemies refuels your Void Energy, and makes you stronger");
+        Console.WriteLine("Now go, create, destroy and become one with thy light");
 		Console.WriteLine("----END OF DIALOGUE----");
 		Console.WriteLine("Confused? type help");
 		Console.WriteLine();
@@ -169,7 +181,7 @@ public void Play()
     if (player.health <= 0)
     {
         Console.WriteLine("Your Void fades away (dead)");
-        Console.WriteLine("TIP: Pick up Void Health, you wont die lol!");
+        Console.WriteLine("TIP: Slaying Enemies makes you healthier.");
         wantToQuit = true;
         return wantToQuit;
     }
@@ -212,6 +224,9 @@ public void Play()
             break;
         case "use":
             Use(command);
+            break;
+        case "win":
+            WinGame();
             break;
     }
 
@@ -288,7 +303,7 @@ public void Play()
             Enemy enemy = enemyEntry.Value;
 
 			Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine($"\u001b[31m{enemy.Name}\u001b[0m, the \u001b[31m{enemy.enemyTitle}. || Health: {enemy.Health}");
+            Console.WriteLine($"\u001b[31m{enemy.Name}\u001b[0m, the \u001b[31m{enemy.enemyTitle}. || Health: {enemy.Health} Armor: {enemy.armor} ||");
 			Console.ForegroundColor = ConsoleColor.White;
             }
 
@@ -464,7 +479,7 @@ public string Use(string itemName, string enemyName)
 public int playerdealtDMG
 {
     get
-    {
+    { 
         // Check if the backpack is not null and has items
         if (player.backPack != null && player.backPack.items != null)
         {

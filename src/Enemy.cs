@@ -1,8 +1,9 @@
 class Enemy
 {
     public Room CurrentRoom { get; set; }
-    public int Health = 100;
-    public int armor = 0;
+    public int Health;
+    public int health;
+    public int armor;
 
     public int Damage { get; set; }
     
@@ -10,27 +11,22 @@ class Enemy
     public int healPlayer;
     public string Name = "";
     public string enemyTitle = "";
-    private int damageTaken;
-    private int damageHealed;
     public bool isAlive;
     public Inventory backPack;
     public Player player;
     private List<Item> loot;
 
-    public Enemy(int armor,string title,int dmg,int hlPly, Player p)
+    public Enemy(int health,int armor,string title,int dmg,int hlPly, Player p)
     {
         CurrentRoom = null;
-        Health = 100;
         Name = "";
-        armor = 0;
+        this.health = Health;
+        this.armor = armor;
+        Health += armor;
         Damage = dmg;
         enemyTitle = title;
         damage = dmg;
         healPlayer = hlPly;
-
-
-        damageTaken = 5;
-        damageHealed = 10;
         player = p;
         backPack = new Inventory(25); 
         this.loot = new List<Item>();
@@ -54,9 +50,30 @@ class Enemy
     }
 
     public void damageEnemy(int damage)
+{
+    // First, deduct from armor if armor is greater than 0
+    if (armor > 0)
+    {
+        if (damage >= armor)
+        {
+            // If damage is greater than or equal to armor, armor goes to 0
+            damage -= armor;
+            armor = 0;
+        }
+        else
+        {
+            // If damage is less than armor, only deduct from armor
+            armor -= damage;
+            damage = 0; // No remaining damage to health
+        }
+    }
+    
+    // Then, if there's any remaining damage after armor deduction, deduct from health
+    if (damage > 0)
     {
         Health -= damage;
     }
+}
 
     public bool isDead()
     {
@@ -66,7 +83,6 @@ class Enemy
             Console.WriteLine($"{Name} is dead!");
             isAlive = false;
 
-            // Optionally, remove the enemy from the current room's dictionary
             if (CurrentRoom != null && CurrentRoom.enemies.ContainsKey(Name))
             {
                 CurrentRoom.enemies.Remove(Name);
